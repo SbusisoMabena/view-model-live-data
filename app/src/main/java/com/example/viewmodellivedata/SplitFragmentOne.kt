@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.viewmodellivedata.data.viewmodels.TotalsViewModel
@@ -24,17 +25,17 @@ class SplitFragmentOne : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<TextView>(
-            R.id.fragment_split_one_text_view
-        ).text = getString(R.string.total, 0)
+        prepareViewModel()
     }
 
     private fun prepareViewModel() {
-        val totalsViewModel = ViewModelProvider(this).get(TotalsViewModel::class.java)
-        updateText(totalsViewModel.total)
+        val totalsViewModel = ViewModelProvider(requireActivity()).get(TotalsViewModel::class.java)
 
+        totalsViewModel.getTotal().observe(viewLifecycleOwner) {
+            updateText(it)
+        }
         view?.findViewById<Button>(R.id.fragment_split_one_button)?.setOnClickListener {
-            updateText(totalsViewModel.increaseTotal())
+            totalsViewModel.increaseTotal()
         }
     }
 
